@@ -4,8 +4,12 @@ import joblib
 import pandas as pd
 import os
 
+# Define the file paths
+cleaned_data_file = 'data/cleaned_combined_data.csv'
+heart_model_file = 'models/heart_disease_risk_model.pkl'
+diabetes_model_file = 'models/diabetes_risk_model.pkl'
+
 # Load cleaned data
-cleaned_data_file = '/Users/claudiaislas/Desktop/Fitabase Data 4.12.16-5.12.16/cleaned_combined_data.csv'
 data = pd.read_csv(cleaned_data_file)
 
 # Define features and target variable
@@ -14,8 +18,8 @@ data['HeartDiseaseRisk'] = ((data['HeartRate'] > 100) | (data['TotalSteps'] < 50
 data['DiabetesRisk'] = ((data['Calories'] > 2500) | (data['MinutesAsleep'] < 300))
 
 # Check the distribution of the target variables
-print(data['HeartDiseaseRisk'].value_counts())
-print(data['DiabetesRisk'].value_counts())
+print("Heart Disease Risk Distribution:\n", data['HeartDiseaseRisk'].value_counts())
+print("Diabetes Risk Distribution:\n", data['DiabetesRisk'].value_counts())
 
 X = data[features]
 y_heart = data['HeartDiseaseRisk']
@@ -26,6 +30,7 @@ if len(data['HeartDiseaseRisk'].unique()) < 2:
     raise ValueError("HeartDiseaseRisk data contains only one class. Please adjust the conditions to ensure both classes are present.")
 if len(data['DiabetesRisk'].unique()) < 2:
     raise ValueError("DiabetesRisk data contains only one class. Please adjust the conditions to ensure both classes are present.")
+
 
 # Split the data into training and testing sets
 X_train_heart, X_test_heart, y_train_heart, y_test_heart = train_test_split(X, y_heart, test_size=0.3, random_state=42)
@@ -39,3 +44,5 @@ joblib.dump(model_heart, 'heart_disease_risk_model.pkl')
 model_diabetes = LogisticRegression()
 model_diabetes.fit(X_train_diabetes, y_train_diabetes)
 joblib.dump(model_diabetes, 'diabetes_risk_model.pkl')
+
+
