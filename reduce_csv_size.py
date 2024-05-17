@@ -1,14 +1,11 @@
 import pandas as pd
 
 # Load the large CSV file
-large_csv_file = 'heartrate_seconds_merged.csv'
-df = pd.read_csv(large_csv_file)
+heartrate_seconds_file = 'heartrate_seconds_merged.csv'
+heartrate_seconds = pd.read_csv(heartrate_seconds_file)
 
-# Sample the data (e.g., 10% of the original data)
-sample_df = df.sample(frac=0.1, random_state=42)
+# Sample 10% of the data
+heartrate_seconds_sampled = heartrate_seconds.sample(frac=0.1, random_state=1)
 
 # Save the sampled data to a new CSV file
-sample_csv_file = 'heartrate_seconds_sampled.csv'
-sample_df.to_csv(sample_csv_file, index=False)
-
-print(f"Sampled data saved to {sample_csv_file}")
+heartrate_seconds_sampled.to_csv('heartrate_seconds_sampled.csv', index=False)
