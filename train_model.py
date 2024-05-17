@@ -5,8 +5,8 @@ import pandas as pd
 import os
 
 # Load cleaned data
-cleaned_data_file = '/Users/claudiaislas/Desktop/Fitabase Data 4.12.16-5.12.16/cleaned_combined_data.csv'
-data = pd.read_csv(cleaned_data_file)
+base_url = "https://raw.githubusercontent.com/cmislas/phimp-health-app/main/"
+cleaned_data_file = base_url + "cleaned_combined_data.csv"
 
 # Define features and target variable
 features = ['HeartRate', 'TotalSteps', 'Calories', 'MinutesAsleep', 'Weight']
