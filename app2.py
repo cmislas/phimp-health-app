@@ -66,14 +66,22 @@ def upload():
         logger.info(f"Available columns in data dataframe: {data.columns}")
 
         # Predict heart disease and diabetes risk
-        data['HeartDiseaseRisk'] = model_heart.predict(data[features])
-        data['DiabetesRisk'] = model_diabetes.predict(data[features])
+        try:
+            data['HeartDiseaseRisk'] = model_heart.predict(data[features])
+            data['DiabetesRisk'] = model_diabetes.predict(data[features])
+            logger.info("Predictions made successfully.")
+        except Exception as e:
+            logger.error(f"Error during prediction: {e}")
+            return "An error occurred during prediction."
 
         # Identify users at risk
         at_risk_heart = data[data['HeartDiseaseRisk'] == 1]
         at_risk_diabetes = data[data['DiabetesRisk'] == 1]
         risk_message_heart = f"{len(at_risk_heart)} users are at risk of heart disease."
         risk_message_diabetes = f"{len(at_risk_diabetes)} users are at risk of diabetes."
+
+        logger.info(risk_message_heart)
+        logger.info(risk_message_diabetes)
 
         return render_template('result.html', summary=summary, plot_url=plot_url,
                                risk_message_heart=risk_message_heart,
