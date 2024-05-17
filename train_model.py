@@ -4,13 +4,9 @@ import joblib
 import pandas as pd
 import os
 
-# Define the file paths
-cleaned_data_file = 'data/cleaned_combined_data.csv'
-heart_model_file = 'models/heart_disease_risk_model.pkl'
-diabetes_model_file = 'models/diabetes_risk_model.pkl'
-
 # Load cleaned data
-data = pd.read_csv(cleaned_data_file)
+base_url = "https://raw.githubusercontent.com/cmislas/phimp-health-app/main/"
+cleaned_data_file = base_url + "cleaned_combined_data.csv"
 
 # Define features and target variable
 features = ['HeartRate', 'TotalSteps', 'Calories', 'MinutesAsleep', 'Weight']
@@ -18,12 +14,13 @@ data['HeartDiseaseRisk'] = ((data['HeartRate'] > 100) | (data['TotalSteps'] < 50
 data['DiabetesRisk'] = ((data['Calories'] > 2500) | (data['MinutesAsleep'] < 300))
 
 # Check the distribution of the target variables
-print("Heart Disease Risk Distribution:\n", data['HeartDiseaseRisk'].value_counts())
-print("Diabetes Risk Distribution:\n", data['DiabetesRisk'].value_counts())
+print(data['HeartDiseaseRisk'].value_counts())
+print(data['DiabetesRisk'].value_counts())
 
 X = data[features]
 y_heart = data['HeartDiseaseRisk']
 y_diabetes = data['DiabetesRisk']
+
 
 # Ensure that both classes are present
 if len(data['HeartDiseaseRisk'].unique()) < 2:
