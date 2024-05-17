@@ -10,7 +10,7 @@ import base64
 app = Flask(__name__)
 
 # URLs to your CSV files on GitHub
-base_url = "https://raw.githubusercontent.com/yourusername/your-repository-name/main/"
+base_url = "https://raw.githubusercontent.com/cmislas/phimp-health-app/main/"
 daily_activity_url = base_url + "dailyActivity_merged.csv"
 heartrate_seconds_url = base_url + "heartrate_seconds_merged.csv"
 sleep_data_url = base_url + "sleepDay_merged.csv"
@@ -19,7 +19,7 @@ weight_data_url = base_url + "weightLogInfo_merged.csv"
 # Function to download files from GitHub
 def download_file(url, filename):
     response = requests.get(url)
-    response.raise_for_status()
+    response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
     with open(filename, 'wb') as f:
         f.write(response.content)
 
@@ -78,4 +78,5 @@ def upload():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5005)
+
 
