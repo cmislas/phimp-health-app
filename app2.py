@@ -16,10 +16,7 @@ logger = logging.getLogger(__name__)
 
 # URLs to your CSV files on GitHub
 base_url = "https://raw.githubusercontent.com/cmislas/phimp-health-app/main/"
-daily_activity_url = base_url + "dailyActivity_merged.csv"
-heartrate_seconds_url = base_url + "heartrate_seconds_sampled.csv"
-sleep_data_url = base_url + "sleepDay_merged.csv"
-weight_data_url = base_url + "weightLogInfo_merged.csv"
+combined_data_url = base_url + "cleaned_combined_data.csv"
 
 # Function to download files from GitHub
 def download_file(url, filename):
@@ -33,21 +30,14 @@ def download_file(url, filename):
 
 # Download data files
 try:
-    daily_activity_file = 'dailyActivity_merged.csv'
-    heartrate_seconds_file = 'heartrate_seconds_sampled.csv'
-    sleep_data_file = 'sleepDay_merged.csv'
-    weight_data_file = 'weightLogInfo_merged.csv'
-
-    download_file(daily_activity_url, daily_activity_file)
-    download_file(heartrate_seconds_url, heartrate_seconds_file)
-    download_file(sleep_data_url, sleep_data_file)
-    download_file(weight_data_url, weight_data_file)
+    combined_data_file = 'cleaned_combined_data.csv'
+    download_file(combined_data_url, combined_data_file)
 
     # Load data
-    daily_activity = pd.read_csv(daily_activity_file)
-    heartrate_seconds = pd.read_csv(heartrate_seconds_file)
-    sleep_data = pd.read_csv(sleep_data_file)
-    weight_data = pd.read_csv(weight_data_file)
+    combined_data = pd.read_csv(combined_data_file)
+
+    # Verify column names
+    print(combined_data.columns)
 
     # Load models
     model_heart = joblib.load('heart_disease_risk_model.pkl')
@@ -63,24 +53,24 @@ def home():
 def upload():
     try:
         # Perform data analysis
-        summary = daily_activity.describe().to_html()
+        summary = combined_data.describe().to_html()
 
         # Generate plot
         fig, ax = plt.subplots()
-        daily_activity.plot(ax=ax)
+        combined_data.plot(ax=ax)
         img = io.BytesIO()
         plt.savefig(img, format='png')
         img.seek(0)
         plot_url = base64.b64encode(img.getvalue()).decode()
 
         # Predict heart disease and diabetes risk
-        features = ['Value', 'TotalSteps', 'Calories', 'TotalMinutesAsleep', 'WeightKg']
-        daily_activity['HeartDiseaseRisk'] = model_heart.predict(daily_activity[features])
-        daily_activity['DiabetesRisk'] = model_diabetes.predict(daily_activity[features])
+        features = ['HeartRate', 'TotalSteps', 'Calories', 'MinutesAsleep', 'Weight']  # Adjust to match actual column names
+        combined_data['HeartDiseaseRisk'] = model_heart.predict(combined_data[features])
+        combined_data['DiabetesRisk'] = model_diabetes.predict(combined_data[features])
 
         # Identify users at risk
-        at_risk_heart = daily_activity[daily_activity['HeartDiseaseRisk'] == 1]
-        at_risk_diabetes = daily_activity[daily_activity['DiabetesRisk'] == 1]
+        at_risk_heart = combined_data[combined_data['HeartDiseaseRisk'] == 1]
+        at_risk_diabetes = combined_data[combined_data['DiabetesRisk'] == 1]
         risk_message_heart = f"{len(at_risk_heart)} users are at risk of heart disease."
         risk_message_diabetes = f"{len(at_risk_diabetes)} users are at risk of diabetes."
 
@@ -93,10 +83,4 @@ def upload():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5005)
-
-
-
-
-
-
 
