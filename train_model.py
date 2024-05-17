@@ -9,7 +9,7 @@ base_url = "https://raw.githubusercontent.com/cmislas/phimp-health-app/main/"
 cleaned_data_file = base_url + "cleaned_combined_data.csv"
 
 # Define features and target variable
-features = ['HeartRate', 'TotalSteps', 'Calories', 'MinutesAsleep', 'Weight']
+features = ['Value', 'TotalSteps', 'Calories', 'TotalMinutesAsleep', 'WeightKg']
 data['HeartDiseaseRisk'] = ((data['HeartRate'] > 100) | (data['TotalSteps'] < 5000)) & (data['Weight'] > 80)
 data['DiabetesRisk'] = ((data['Calories'] > 2500) | (data['MinutesAsleep'] < 300))
 

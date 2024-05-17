@@ -74,7 +74,7 @@ def upload():
         plot_url = base64.b64encode(img.getvalue()).decode()
 
         # Predict heart disease and diabetes risk
-        features = ['HeartRate', 'TotalSteps', 'Calories', 'MinutesAsleep', 'Weight']
+        features = ['Value', 'TotalSteps', 'Calories', 'TotalMinutesAsleep', 'WeightKg']
         daily_activity['HeartDiseaseRisk'] = model_heart.predict(daily_activity[features])
         daily_activity['DiabetesRisk'] = model_diabetes.predict(daily_activity[features])
 
