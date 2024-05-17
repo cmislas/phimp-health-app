@@ -1,22 +1,48 @@
-import matplotlib
-matplotlib.use('Agg')
-from flask import Flask, request, render_template
+import os
+import requests
 import pandas as pd
+import joblib
+from flask import Flask, request, render_template
 import matplotlib.pyplot as plt
 import io
 import base64
-import os
-import joblib
-import requests
 
 app = Flask(__name__)
 
-# Load the trained models
+# URLs to your CSV files on GitHub
+base_url = "https://raw.githubusercontent.com/yourusername/your-repository-name/main/"
+daily_activity_url = base_url + "dailyActivity_merged.csv"
+heartrate_seconds_url = base_url + "heartrate_seconds_merged.csv"
+sleep_data_url = base_url + "sleepDay_merged.csv"
+weight_data_url = base_url + "weightLogInfo_merged.csv"
+
+# Function to download files from GitHub
+def download_file(url, filename):
+    response = requests.get(url)
+    response.raise_for_status()
+    with open(filename, 'wb') as f:
+        f.write(response.content)
+
+# Download data files
+daily_activity_file = 'dailyActivity_merged.csv'
+heartrate_seconds_file = 'heartrate_seconds_merged.csv'
+sleep_data_file = 'sleepDay_merged.csv'
+weight_data_file = 'weightLogInfo_merged.csv'
+
+download_file(daily_activity_url, daily_activity_file)
+download_file(heartrate_seconds_url, heartrate_seconds_file)
+download_file(sleep_data_url, sleep_data_file)
+download_file(weight_data_url, weight_data_file)
+
+# Load data
+daily_activity = pd.read_csv(daily_activity_file)
+heartrate_seconds = pd.read_csv(heartrate_seconds_file)
+sleep_data = pd.read_csv(sleep_data_file)
+weight_data = pd.read_csv(weight_data_file)
+
+# Load models
 model_heart = joblib.load('heart_disease_risk_model.pkl')
 model_diabetes = joblib.load('diabetes_risk_model.pkl')
-
-# Define the file path for the cleaned combined data
-cleaned_data_file = '/Users/claudiaislas/Desktop/Fitabase Data 4.12.16-5.12.16/cleaned_combined_data.csv'
 
 @app.route('/')
 def home():
@@ -24,15 +50,12 @@ def home():
 
 @app.route('/upload', methods=['POST'])
 def upload():
-    # Read the cleaned combined data
-    data = pd.read_csv(cleaned_data_file)
-
     # Perform data analysis
-    summary = data.describe().to_html()
+    summary = daily_activity.describe().to_html()
 
     # Generate plot
     fig, ax = plt.subplots()
-    data.plot(ax=ax)
+    daily_activity.plot(ax=ax)
     img = io.BytesIO()
     plt.savefig(img, format='png')
     img.seek(0)
@@ -40,18 +63,19 @@ def upload():
 
     # Predict heart disease and diabetes risk
     features = ['HeartRate', 'TotalSteps', 'Calories', 'MinutesAsleep', 'Weight']
-    data['HeartDiseaseRisk'] = model_heart.predict(data[features])
-    data['DiabetesRisk'] = model_diabetes.predict(data[features])
+    daily_activity['HeartDiseaseRisk'] = model_heart.predict(daily_activity[features])
+    daily_activity['DiabetesRisk'] = model_diabetes.predict(daily_activity[features])
 
     # Identify users at risk
-    at_risk_heart = data[data['HeartDiseaseRisk'] == 1]
-    at_risk_diabetes = data[data['DiabetesRisk'] == 1]
+    at_risk_heart = daily_activity[daily_activity['HeartDiseaseRisk'] == 1]
+    at_risk_diabetes = daily_activity[daily_activity['DiabetesRisk'] == 1]
     risk_message_heart = f"{len(at_risk_heart)} users are at risk of heart disease."
     risk_message_diabetes = f"{len(at_risk_diabetes)} users are at risk of diabetes."
 
     return render_template('result.html', summary=summary, plot_url=plot_url,
-                          risk_message_heart=risk_message_heart,
-                          risk_message_diabetes=risk_message_diabetes)
+                           risk_message_heart=risk_message_heart,
+                           risk_message_diabetes=risk_message_diabetes)
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5006)
+    app.run(debug=True, port=5005)
+
