@@ -12,7 +12,7 @@ app = Flask(__name__)
 # URLs to your CSV files on GitHub
 base_url = "https://raw.githubusercontent.com/cmislas/phimp-health-app/main/"
 daily_activity_url = base_url + "dailyActivity_merged.csv"
-heartrate_seconds_url = base_url + "heartrate_seconds_sampled.csv"  # Updated URL
+heartrate_seconds_url = base_url + "heartrate_seconds_sampled.csv"  # Use the sampled file
 sleep_data_url = base_url + "sleepDay_merged.csv"
 weight_data_url = base_url + "weightLogInfo_merged.csv"
 
@@ -25,7 +25,7 @@ def download_file(url, filename):
 
 # Download data files
 daily_activity_file = 'dailyActivity_merged.csv'
-heartrate_seconds_file = 'heartrate_seconds_sampled.csv'  # Updated filename
+heartrate_seconds_file = 'heartrate_seconds_sampled.csv'  # Use the sampled file
 sleep_data_file = 'sleepDay_merged.csv'
 weight_data_file = 'weightLogInfo_merged.csv'
 
@@ -78,6 +78,7 @@ def upload():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5005)
+
 
 
 
