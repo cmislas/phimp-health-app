@@ -49,11 +49,6 @@ def home():
 @app.route('/upload', methods=['POST'])
 def upload():
     try:
-        file = request.files['file']
-        file_path = os.path.join(os.getcwd(), file.filename)
-        file.save(file_path)
-        data = pd.read_csv(file_path)
-
         # Perform data analysis
         summary = data.describe().to_html()
 
@@ -97,5 +92,6 @@ def upload():
 
 if __name__ == '__main__':
     app.run(debug=True, port=5005)
+
 
 
