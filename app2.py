@@ -46,8 +46,8 @@ except Exception as e:
 def home():
     return render_template('index.html')
 
-@app.route('/upload', methods=['POST'])
-def upload():
+@app.route('/analyze', methods=['POST'])
+def analyze():
     try:
         # Perform data analysis
         summary = data.describe().to_html()
@@ -87,11 +87,12 @@ def upload():
                                risk_message_heart=risk_message_heart,
                                risk_message_diabetes=risk_message_diabetes)
     except Exception as e:
-        logger.error(f"An error occurred during upload: {e}")
-        return "An error occurred during upload."
+        logger.error(f"An error occurred during analysis: {e}")
+        return "An error occurred during analysis."
 
 if __name__ == '__main__':
     app.run(debug=True, port=5005)
+
 
 
 

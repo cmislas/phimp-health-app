@@ -1,16 +1,18 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <title>Health Analysis Results</title>
+    <title>Analysis Results</title>
 </head>
 <body>
-    <h1>Data Summary</h1>
-    <div>{{ summary|safe }}</div>
-
-    <h1>Risk Analysis</h1>
-    <img src="data:image/png;base64,{{ plot_url }}" alt="Plot">
+    <h1>Analysis Results</h1>
+    <div>
+        {{ summary|safe }}
+    </div>
+    <div>
+        <img src="data:image/png;base64,{{ plot_url }}" alt="Data Plot">
+    </div>
     <p>{{ risk_message_heart }}</p>
     <p>{{ risk_message_diabetes }}</p>
 </body>
 </html>
+
